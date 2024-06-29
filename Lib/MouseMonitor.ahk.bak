@@ -1,0 +1,9 @@
+﻿#Requires AutoHotkey v2.0
+
+OnMessage 0x0200, WM_LBUTTONDOWN
+
+
+WM_LBUTTONDOWN(wParam, lParam, msg, hwnd) {
+    X := lParam & 0xFFFF
+    Y := lParam >> 16
+}
