@@ -9,7 +9,7 @@ Ass.__Delete()
 Esc::ExitApp()
 
 
-Class region {
+Class HookMouse {
 
     static dpi := A_ScreenDPI / 96
     static mouseBuff := Buffer( 8, 0 )    
