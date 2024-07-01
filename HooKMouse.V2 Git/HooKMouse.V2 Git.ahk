@@ -8,22 +8,27 @@ hHookMouse:= SetHook( WH_MOUSE_LL, andress )
 
 OnExit( Unhook )
 
-;Esc::ExitApp() ; Gera loop continuo, semellhante a 'Persistent'
+Esc::ExitApp() ; Gera loop continuo, semellhante a 'Persistent'
 
 
 SetHook( idHook, pfn ) {
+   ; ListVars()
     hHook := SetWindowsHookEx( idHook, pfn ) ;DllCall("SetWindowsHookEx", "int", idHook, "Ptr", pfn, "Ptr", DllCall("GetModuleHandle", "Ptr", 0), "UInt", 0, "Ptr")
     if ( !hHook ) {
         MsgBox( "Failed to set hook: " idHook )
         ExitApp()
     }
+    
+    ListVars()
     return hHook
 }
 
-MouseMove( nCode, wParam, lParam ) { 
-
+MouseMove(  nCode, wParam, lParam, OutBuff ) { 
+    ;nCode &= 0xFFFF
     Critical
+
     static lastMouseMove := A_TickCount
+    ListVars()
 	If ( !nCode && ( wParam = 0x200 ) ) { 
         
 		diffMouseMove := A_TickCount - lastMouseMove
@@ -38,7 +43,7 @@ MouseMove( nCode, wParam, lParam ) {
         ;ListVars()
 		;OutputDebug( Text )
 
-        ;ToolTip( Text )
+        ToolTip( Text )
 
         setVars := -1
         currTime := A_TickCount
@@ -53,8 +58,7 @@ MouseMove( nCode, wParam, lParam ) {
 }
 
 CallNextHookEx( nCode, wParam, lParam, hHook := 0 ) {
-    ;ListLines()
-    
+        
 	LRESULT :=
     DllCall(
         "CallNextHookEx",
@@ -78,6 +82,7 @@ SetWindowsHookEx( idHook, pfn ) {
         "UInt", 0,
         "Ptr"
     )
+    ListVars()
     return hHook
 }
 
