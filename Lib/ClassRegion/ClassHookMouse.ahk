@@ -1,7 +1,7 @@
 
 ;Test 001
 
-Ass := region( "WH_KEYBOARD_LL" )
+Ass := HookMouse( )
 
 Sleep( 20000 )
 Ass.__Delete()
@@ -9,35 +9,26 @@ Ass.__Delete()
 Esc::ExitApp()
 
 
-Class region {
+Class HookMouse {
 
     static dpi := A_ScreenDPI / 96
     static mouseBuff := Buffer( 8, 0 )    
     static WH_MOUSE_LL := 14
-    static WH_KEYBOARD_LL := 13
     static andress := 0
-    static hHookMouse := 0 ;region.SetHook( region.WH_MOUSE_LL, region.andress )
+    static hHookMouse := 0 ;HookMouse.SetHook( HookMouse.WH_MOUSE_LL, HookMouse.andress )
     
 
-    __New( phook ) {
-        if ( phook = "WH_MOUSE_LL" ) {
-            hook := region.WH_MOUSE_LL
-            fn := "MoveMouse"
-        }
-        else if ( phook = "WH_KEYBOARD_LL" ) {
-            hook := region.WH_KEYBOARD_LL
-            fn := "Keyboard"
-        }
-        ;region.andress := CallbackCreate( region.%fn% )
-        region.andress := CallbackCreate( ObjBindMethod( this, fn ), , 3 ) ;OK
-        MsgBox( region.andress )
-        region.hHookMouse := region.SetHook( hook, region.andress )
-        ;this.andress := region.andress
+    __New() {
+        
+        HookMouse.andress := CallbackCreate( ObjBindMethod( this, "MoveMouse" ), , 3 ) ;OK
+        MsgBox( HookMouse.andress )
+        HookMouse.hHookMouse := HookMouse.SetHook( HookMouse.WH_MOUSE_LL, HookMouse.andress )
+        
     }
 
     
     __Delete() {
-        region.Unhook()
+        HookMouse.Unhook()
         MsgBox( "Saiu" )
         ExitApp()
     }
@@ -75,7 +66,7 @@ Class region {
             ;QueryMouseMove( setVars, currTime , xPos, yPos )
         }
 
-        Return region.CallNextHookEx( nCode, wParam, lParam ) 
+        Return HookMouse.CallNextHookEx( nCode, wParam, lParam ) 
     }
 
     ;static Keyboard( nCode, wParam, lParam ) {
@@ -98,7 +89,7 @@ Class region {
             
             Text :=
             (
-                "Key Pressed: " region.GetKeyDetails( lParam )
+                "Key Pressed: " HookMouse.GetKeyDetails( lParam )
                 " Last Key Press: " diffKeyPress
             )
             Assd() {
@@ -108,7 +99,7 @@ Class region {
             SetTimer( Assd , -2000 )
         }
     
-        Resut := region.CallNextHookEx( nCode, wParam, lParam )
+        Resut := HookMouse.CallNextHookEx( nCode, wParam, lParam )
     
         return Resut
     }
@@ -134,7 +125,7 @@ Class region {
 
     static SetHook( idHook, pfn ) {
         
-        hHook := region.SetWindowsHookEx( idHook, pfn )
+        hHook := HookMouse.SetWindowsHookEx( idHook, pfn )
     
         if ( !hHook ) {
             MsgBox( "Failed to set hook: " idHook )
@@ -160,7 +151,7 @@ Class region {
 
     static SetWindowsHookEx( idHook, pfn ) {
 
-        hModule := region.GetModuleHandle()
+        hModule := HookMouse.GetModuleHandle()
         hHook :=
         DllCall(
             "SetWindowsHookEx",
@@ -197,7 +188,7 @@ Class region {
 
     static Unhook() {
         MsgBox( "Saindo" )
-        CallbackFree( region.andress )
-        region.UnhookWindowsHookEx( region.hHookMouse ) 
+        CallbackFree( HookMouse.andress )
+        HookMouse.UnhookWindowsHookEx( HookMouse.hHookMouse ) 
     }
 }
