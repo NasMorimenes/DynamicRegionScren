@@ -5,13 +5,32 @@
  * @date 2024/07/01
  * @version 0.0.0
  ***********************************************************************/
-WH_CALLWNDPROC( Value := "Int" ) {
+WH_CALLWNDPROC( "Hex", 2 )
+WH_CALLWNDPROC( Value := "Int", test := 0 ) {
+    if ( test ) {
+        if test = 1
+            Goto( "Teste1" )
+        else if test = 2
+            Goto( "Teste2" )
+    }
+
     Int := 4
     Hex := "0x2"
 
     if ( Value = "Hex" ) {
         return Hex
     }
-
     return Int
+
+    Teste1:
+        Values := 4
+        if ( WH_CALLWNDPROC() == Values ) {
+            MsgBox( true )
+        }
+    Teste2:
+        Values := "0x2"
+        if ( WH_CALLWNDPROC() == Values ) {
+            MsgBox( true )
+        }
+
 }
