@@ -5,7 +5,6 @@
  * @date 2024/07/01
  * @version 0.0.0
  ***********************************************************************/
-WH_CALLWNDPROC( "Hex", 2 )
 WH_CALLWNDPROC( Value := "Int", test := 0 ) {
     if ( test ) {
         if test = 1
@@ -29,7 +28,7 @@ WH_CALLWNDPROC( Value := "Int", test := 0 ) {
         }
     Teste2:
         Values := "0x2"
-        if ( WH_CALLWNDPROC() == Values ) {
+        if ( WH_CALLWNDPROC( "Hex") == Values ) {
             MsgBox( true )
         }
 

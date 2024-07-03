@@ -1,13 +1,26 @@
 ﻿#Include LogDebug.ahk
 #Include CallNextHookEx.ahk
 #Include QueryMoveMouse.ahk
+#Include LowLevelMouseProc_wParam.ahk
+#Include MSLLHOOKSTRUCT.ahk
 
 ; Mouse Hook Procedure
 MoveMouse( nCode, wParam, lParam ) {
+
     Critical
     static lastMouseMove := A_TickCount
-    if (!nCode && wParam == 0x200)  ; WM_MOUSEMOVE
-    {
+
+    if ( !nCode ) { 
+        ;ListVars()
+        info := LowLevelMouseProc_wParam( wParam )
+        ss:= MSLLHOOKSTRUCT( lParam )
+        ;ToolTip( info )
+    }
+    
+    /*
+    if ( !nCode && wParam == 0x200 ) { ; WM_MOUSEMOVE
+
+
         xPos := NumGet(lParam, 0, "Int")
         yPos := NumGet(lParam, 4, "Int")
         diffMouseMove := A_TickCount - lastMouseMove
@@ -22,7 +35,9 @@ MoveMouse( nCode, wParam, lParam ) {
         ;    diffMouseMove := A_TickCount - lastKeyPress
         ;}
         ;lastKeyPress := A_TickCount
+        ;************************************************************
 
+    
         ; Ignorar eventos com Last Move igual a 0
         if (diffMouseMove != 0) {
             info :=
@@ -40,10 +55,10 @@ MoveMouse( nCode, wParam, lParam ) {
                 )
             }
         }
-
+        
 
         ;*************************************************************
-        /*
+        
         info :=
         (
             "Mouse Moved: X=" xPos
@@ -56,9 +71,9 @@ MoveMouse( nCode, wParam, lParam ) {
                 LOG_TO_FILE
             )
         }
-        */
+        
     }
-
+    */
     LRESULT := CallNextHookEx( nCode, wParam, lParam )
 
     return LRESULT
