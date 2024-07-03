@@ -1,8 +1,31 @@
+; https://learn.microsoft.com/pt-br/windows/win32/winmsg/hooks
+;instalação do Hook:
+InstallHook() {
+
+    idHook := defHook( &idHook )
+}
 ; Defini tipo de gancho a ser instalado - defHook
+/**
+ * https://learn.microsoft.com/pt-br/windows/win32/api/winuser/nf-winuser-setwindowshookexw
+ * @param idHook O tipo de procedimento de gancho a ser instalado
+ */
+defHook( &idHook ) {
 
-defHook := WH_CALLWNDPROC()
+    return idHook
+}
+/**
+ * https://learn.microsoft.com/pt-br/windows/win32/winmsg/hooks
+ * @description Um ponteiro para o procedimento de gancho. Se o parâmetro dwThreadId for zero ou especificar o identificador de um thread criado por um processo diferente, o parâmetro lpfn deverá apontar para um procedimento de gancho em uma DLL. Caso contrário, lpfn pode apontar para um procedimento de gancho no código associado ao processo atual.
+ * @param lpfn 
+ */
+HOOKPROC( &lpfn ) {
 
+}
 
+/**
+ * https://learn.microsoft.com/pt-br/windows/win32/api/winuser/nf-winuser-setwindowshookexw
+ * 
+ */
 SetWindowsHookEx() {
 
 }
