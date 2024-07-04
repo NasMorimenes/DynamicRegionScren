@@ -1,8 +1,74 @@
-; https://learn.microsoft.com/pt-br/windows/win32/winmsg/hooks
-;instalação do Hook:
-InstallHook() {
-
+/** 
+ * https://learn.microsoft.com/pt-br/windows/win32/winmsg/hooks
+ * 
+ * instalação do Hook:
+ * ----
+ * ilustration
+ * ---
+ * param idHook \
+ * \
+ * hook \
+ * msgSource ---------
+ */
+InstallHook( &idHook ) {
+    if (Type(idHook) = "String") {
+        switch idHook {
+            case "WH_CALLWNDPROC":               ;XXXXXXXXXXXXXXXXXXXXX Pilha1 XXXXXXXXXXXXXXXXXXXX
+                idHook := 4
+                CallWndProc()
+            case "WH_CALLWNDPROCRET":
+                idHook := 12
+            case "WH_CBT":
+                idHook := 5
+            case "WH_DEBUG":
+                idHook := 9
+            case "WH_FOREGROUNDIDLE":
+                idHook := 11
+            case "WH_GETMESSAGE":
+                idHook := 3
+            case "WH_JOURNALPLAYBACK":
+                idHook := 1
+            case "WH_JOURNALRECORD":
+                idHook := 0
+            case "WH_KEYBOARD":
+                idHook := 2
+            case "WH_KEYBOARD_LL":
+                idHook := 13
+            case "WH_MOUSE":
+                idHook := 7
+            case "WH_MOUSE_LL":
+                idHook := 14
+            case "WH_MSGFILTER":
+                idHook := -1
+            case "WH_SHELL":
+                idHook := 10
+            case "WH_SYSMSGFILTER":
+                idHook := 6
+        }
+    } else if (Type(idHook) = "Integer") {
+        ; Caso idHook seja um número, não é necessário fazer nada, pois já é o valor correto
+        ; Adicione aqui, se necessário, algum processamento adicional para valores numéricos
+    }
     idHook := defHook( &idHook )
+}
+
+/**
+ * https://learn.microsoft.com/pt-br/windows/win32/winmsg/callwndproc
+ */
+CallWndProc( nCode, wParam, lParam ) {               ;XXXXXXXXXXXXXXXXXXXXX Pilha2 XXXXXXXXXXXXXXXXXXXX
+
+    sintaxe := "
+    (
+        LRESULT CALLBACK CallWndProc(
+            _In_ int    nCode,
+            _In_ WPARAM wParam,
+            _In_ LPARAM lParam 
+        `);
+    )"
+
+    HookStructs()             ;XXXXXXXXXXXXXXXXXXXXX Pilha3 XXXXXXXXXXXXXXXXXXXX
+
+    return CallNextHookEx( &hhk, nCode, wParam, lParam )
 }
 ; Defini tipo de gancho a ser instalado - defHook
 /**
@@ -94,6 +160,48 @@ LowLevelMouseProc( nCode, wParam, lParam ) {
 
     return LRESULT
 }
+
+HookStructs() {
+    CWPSTRUCT()               ;XXXXXXXXXXXXXXXXXXXXX Pilha4 XXXXXXXXXXXXXXXXXXXX
+}
+
+
+/**
+ * https://learn.microsoft.com/pt-br/windows/win32/api/winuser/ns-winuser-cwpstruct
+ * 
+ */
+CWPSTRUCT()  {               ;XXXXXXXXXXXXXXXXXXXXX Pilha5 XXXXXXXXXXXXXXXXXXXX
+
+    sintaxe := "
+    (
+        typedef struct tagCWPSTRUCT {
+            LPARAM lParam;
+            WPARAM wParam;
+            UINT   message;
+            HWND   hwnd;
+        } CWPSTRUCT, *PCWPSTRUCT, *NPCWPSTRUCT, *LPCWPSTRUCT;
+    )"
+
+    get() {
+
+    }
+    lParam := Buffer( 8, 0 )
+    wParam := Buffer( 8, 0 )
+    message := Buffer( 8, 0 )
+    hwnd := Buffer( 8, 0 )
+
+    ObjAdHoks() {               ;XXXXXXXXXXXXXXXXXXXXX Pilha6 XXXXXXXXXXXXXXXXXXXX
+        Set_LPARAM() {
+
+        }
+        CWPSTRUCT := { _LPARAM : lParam, _WPARAM : wParam, _message: message, _HDND : hwnd }    
+    }
+
+    _CWPSTRUCT := Buffer( 32, 0 )
+
+    MsgBox( sintaxe )
+}
+
 
 
 ;MsgBox LowLevelMouseProc_wParam( "WM_LBUTTONDOWN" )
