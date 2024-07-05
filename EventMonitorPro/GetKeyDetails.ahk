@@ -1,4 +1,15 @@
 ; Utility Function to Get Key Details
+/**
+ * typedef struct tagKBDLLHOOKSTRUCT {\
+ * DWORD     vkCode;\
+  DWORD     scanCode;\
+  DWORD     flags;\
+  DWORD     time;\
+  ULONG_PTR dwExtraInfo;\
+} KBDLLHOOKSTRUCT, *LPKBDLLHOOKSTRUCT, *PKBDLLHOOKSTRUCT;\
+ * @param lParam 
+ * @returns {String} 
+ */
 GetKeyDetails( lParam ) {
 
     vkCode := NumGet( lParam, 0, "Int" )

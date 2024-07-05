@@ -8,13 +8,46 @@
 MoveMouse( nCode, wParam, lParam ) {
 
     Critical
-    static lastMouseMove := A_TickCount
 
+    static lastMouseMove := A_TickCount
+    static dist := 0
     if ( !nCode ) { 
         ;ListVars()
         info := LowLevelMouseProc_wParam( wParam )
-        ss:= MSLLHOOKSTRUCT( lParam )
-        ;ToolTip( info )
+
+        switch info {
+            case "Roda Mouse":
+                dist := NumGet( lParam, 10, "Short" ) / 120
+
+                if ( dist != dist ) {
+                    ToolTip( dist )
+                }
+                else {
+                    ToolTip( dist " s")
+                }
+                
+            default:
+                ToolTip()
+                
+        }
+    }
+
+        /*
+        if ( info = "Roda Mouse" )  {
+            ++dist
+            ss:= MSLLHOOKSTRUCT( lParam )
+            if ( increment := NumGet( ss, 2, "Short" ) )
+            ss1 :=
+            (
+                NumGet( ss, 0, "Short" ) "`n"
+                NumGet( ss, 2, "Short" )
+            )
+        }
+        else {
+            dist := 0
+        }
+
+        ToolTip( dist )
     }
     
     /*
@@ -74,6 +107,7 @@ MoveMouse( nCode, wParam, lParam ) {
         
     }
     */
+
     LRESULT := CallNextHookEx( nCode, wParam, lParam )
 
     return LRESULT
