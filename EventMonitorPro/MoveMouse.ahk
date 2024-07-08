@@ -17,17 +17,19 @@ MoveMouse( nCode, wParam, lParam ) {
 
         switch info {
             case "Roda Mouse":
-                dist := NumGet( lParam, 10, "Short" ) / 120
+                if ( dist = 0 ) {
+                    dist := NumGet( lParam, 10, "Short" ) / 120
+                }
 
-                if ( dist != dist ) {
+                ;if ( dist != dist ) {
                     ToolTip( dist )
-                }
-                else {
-                    ToolTip( dist " s")
-                }
+                ;}
+                ;else {
+                ;    ToolTip( dist " s")
+                ;}
                 
-            default:
-                ToolTip()
+            ;default:
+               ; ToolTip()
                 
         }
     }
