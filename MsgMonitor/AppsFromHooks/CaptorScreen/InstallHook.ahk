@@ -1,9 +1,9 @@
-﻿InstallHookMK(  pfnM := "", pfnK := "", flag := 0 ) {
+﻿InstallHookMK(  pfnM := "", pfnK := "" ) {
 
     global m_pFn := pfnM
     global k_pFn := pfnK
-    global f_flag := flag
-
+    global f_flag := 0
+    
     if ( Type( pfnM ) == "Func" ) {
         WH_MOUSE_LL := 14
         andressM := CallbackCreate( PFNs )
@@ -49,6 +49,10 @@
         if ( !f_flag ) {
 
             return  CallNextHookEx( nCode, wParam, lParam )
+        }
+        else {
+            
+            return 1
         }
     }
 
