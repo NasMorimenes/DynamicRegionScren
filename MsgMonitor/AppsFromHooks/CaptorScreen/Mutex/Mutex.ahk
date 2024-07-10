@@ -1,4 +1,5 @@
-﻿#Include Includes.ahk
+﻿/*
+#Include Includes.ahk
 hMutex := 0
 mutexName := "Global\BufferMutex"
 buff := Buffer( 4, 0 )
@@ -7,11 +8,10 @@ Values := ReadFromBuffer( mutexName, buff )
 
 MsgBox( Values )
 
-/*
+*/
 
 
-
-Esc::ExitApp()
+;Esc::ExitApp()
 ; Nome do mutex no espaço de nomes global
 mutexName := "Global\BufferMutex"
 

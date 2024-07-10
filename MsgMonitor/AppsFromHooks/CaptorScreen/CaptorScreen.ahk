@@ -1,5 +1,5 @@
-﻿#Include InstallHook.ahk
-#Include MouseDownUp.ahk
+﻿#Include InstallHook.v2.ahk
+#Include MouseDownUp.v2.ahk
 
 
 GuiResize(  xPosIni, yPosIni, xPosFim, yPosFim ) {
