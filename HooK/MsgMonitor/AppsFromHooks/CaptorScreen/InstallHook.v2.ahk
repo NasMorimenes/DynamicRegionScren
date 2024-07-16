@@ -1,7 +1,9 @@
 #Include ProcessSharedData.ahk
+#Include WaitForSingleObject.ahk
 
 ;InstallHookMKV2(  pfnM := "", pfnK := "" ) {
-InstallHookMKV2(  hM := 0, hK := 0 ) {
+InstallHookMKV2(  hM := 0, hK := 0, pfn? ) {
+    global pfnH
 
     if ( hM ) {
         WH_MOUSE_LL := 14
@@ -9,7 +11,7 @@ InstallHookMKV2(  hM := 0, hK := 0 ) {
         hHookMouse := SetHook( WH_MOUSE_LL, andressM )
     }
 
-
+    ( IsSet( pfn ) && pfnH := pfn )
     /*
     global m_pFn := pfnM
     global k_pFn := pfnK
@@ -45,8 +47,9 @@ InstallHookMKV2(  hM := 0, hK := 0 ) {
         global m_pFn
         global k_pFn
         */
+        static text := ""
         global f_flag
-        
+        global pfnH
         global ghMutex
         global sharedData
 
@@ -54,22 +57,37 @@ InstallHookMKV2(  hM := 0, hK := 0 ) {
 
         if ( nCode >= 0 ) {
             ; Bloqueia o mutex
-            if DllCall("WaitForSingleObject", "ptr", ghMutex, "int", 0xFFFFFFFF, "UInt") = 0x00000000 {
+            
+            ;if DllCall("WaitForSingleObject", "ptr", ghMutex, "int", 0xFFFFFFFF, "UInt") = 0x00000000 {
+            result := WaitForSingleObject( ghMutex, 0 )
+            if ( result = 0 ) {
+                text := wParam
                 try {
                     ; Compartilha lParam e wParam
-                    sharedData.wParam := wParam
-                    sharedData.lParam := lParam
-    
+                    ;sharedData.wParam := wParam
+                    ;sharedData.lParam := lParam
+
+                    NumPut( "Ptr", wParam, sharedData, 0 )
+                    NumPut( "Ptr", lParam, sharedData, 8 )
+                    Sleep( 1 )
+
                     ; Sinaliza para processar os dados (pode ser um thread separado)
-                    SetTimer( ProcessSharedData, -1 )
+                    SetTimer( pfnH, -1 )
                 } finally {
                     ; Libera o mutex
                     if !DllCall("ReleaseMutex", "ptr", ghMutex)
                         MsgBox( "Erro ao liberar o mutex." )
+                    
+                    Sleep( 1000 )
                 }
             }
+            else {
+                text := result
+                ToolTip()
+                MsgBox( text )
+            }
         }
-
+        ToolTip( Text, 1000, 50 )
         if ( !f_flag ) {
 
             return  CallNextHookEx( nCode, wParam, lParam )

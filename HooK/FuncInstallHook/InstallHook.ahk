@@ -1,0 +1,6 @@
+﻿
+
+InstallHook( pfn, hooks* ) {
+    
+}
+
