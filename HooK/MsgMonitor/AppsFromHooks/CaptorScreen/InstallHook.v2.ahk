@@ -78,7 +78,7 @@ InstallHookMKV2(  hM := 0, hK := 0, pfn? ) {
                     if !DllCall("ReleaseMutex", "ptr", ghMutex)
                         MsgBox( "Erro ao liberar o mutex." )
                     
-                    Sleep( 1000 )
+                    ;Sleep( 1000 )
                 }
             }
             else {

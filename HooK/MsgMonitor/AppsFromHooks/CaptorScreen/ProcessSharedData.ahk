@@ -15,7 +15,8 @@ ProcessSharedData( ) {
     
 
     ; Bloqueia o mutex para ler os dados compartilhados
-    if DllCall("WaitForSingleObject", "ptr", ghMutex, "int", 0, "UInt") = 0x00000000 {
+    ;if DllCall("WaitForSingleObject", "ptr", ghMutex, "int", 0, "UInt") = 0x00000000 {
+    if ( myMutex.WaitForSingleObject( 0 )  = 0x00000000 ) {
         try {
             ; Processa lParam e wParam
             wParam := NumGet( sharedData, 0, "Ptr" )
@@ -46,7 +47,8 @@ ProcessSharedData( ) {
         } finally {
             ; Libera o mutex
             Sleep( 20 )
-            if ( !DllCall("ReleaseMutex", "ptr", ghMutex) ) {
+            freeMutex := myMutex.ReleaseMutex()
+            if ( !freeMutex ) {
                 Text := "Erro ao liberar o mutex."
                 ;ToolTip( Text )
             }

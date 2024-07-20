@@ -20,12 +20,13 @@ class Mutex {
     }
 
     CreateMutex( Name?, initialOwner := 0, securityAttributes := 0 ) {
+        mutexName := 0
         ( IsSet( Name ) && mutexName := Name )
         hMutex :=
         DllCall( 
             "CreateMutex",
-            "ptr", 0,
-            "int", 0,
+            "ptr", securityAttributes,
+            "int", initialOwner,
             "str", mutexName,
             "ptr"
         )
@@ -54,17 +55,23 @@ class Mutex {
     }
 
     ReleaseMutex() {
+        boolMutex :=
         DllCall(
             "ReleaseMutex",
-            "ptr", this
+            "ptr", this.hMutex,
+            "Int"
         )
+        return boolMutex
     }
 
     CloseHandle() {
+        boolHandle :=
         DllCall(
             "CloseHandle",
-            "ptr", this
+            "ptr", this.hMutex,
+            "Int"
         )
+        return boolHandle
     }
     __Delete() {
         MsgBox( "Deletando Mutex")

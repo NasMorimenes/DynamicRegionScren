@@ -2,7 +2,7 @@
 ;#Include CaptorScreen.ahk
 #Include InstallHook.v2.ahk
 #Include ProcessSharedData.ahk
-#Include C:\Users\morim\OneDrive\DynamicRegionScren\MsgMonitor\AppsFromHooks\CaptorScreen\Mutex\ClasseMutex.ahk
+#Include C:\Users\morim\OneDrive\DynamicRegionScren\Mutex\ClasseMutex.ahk
 
 ; Consulte LeftDownUp.ahk
 
