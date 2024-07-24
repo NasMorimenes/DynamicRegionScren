@@ -10,7 +10,7 @@ class Array2D extends Array {
     }
     i[x, y] => this.Width * (y-1) + x
 }
-
+/*
 grid := Array2D(4, 3)
 grid[4, 1] := "#"
 grid[3, 2] := "#"
@@ -26,3 +26,29 @@ Loop grid.Height {
     gridtext .= "`n"
 }
 MsgBox gridtext
+*/
+
+dss := Adf()
+MsgBox( dss.Hk( 10 ) )
+
+class Adf {
+    __New() {
+        ;( "New Object" )
+    }
+    __Get( name, params ) {
+        MsgBox( params.Length )
+        for i in params {
+            MsgBox i
+        }
+        MsgBox( name " Access Error " ) ;Type( params ) )
+    }
+    __Set() {
+        ;this.__Get()
+    }
+    __Call( name, params ) {
+        MsgBox( params.Length )
+        for i, j in params {
+            MsgBox i " " j
+        }
+    }
+}

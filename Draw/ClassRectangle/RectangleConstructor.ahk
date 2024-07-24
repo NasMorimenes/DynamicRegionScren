@@ -49,6 +49,7 @@ Class GdipC {
         this.ypSet( yp )
     }
     dsGet() {
+
         return GdipC.Size
     }
     xpGet() {
@@ -97,12 +98,59 @@ class Point {
 }
 
 xTop := CoordX()
-MsgBox( xTop[1] )
-xTop[ 1 ] := 10
-MsgBox( xTop[1] )
+xTop.x := 15
+MsgBox( xTop.x )
+xTop.Set( 10 )
+Ass := xTop.Get()
+MsgBox( Ass )
+;;MsgBox( xTop[1] )
+;;xTop[ 1 ] := 10
+;;MsgBox( xTop[1] )
 
 class CoordX {
 
+    __New( x := 0 ) {
+        this.Set( x )  
+    }
+
+    __Get( name, params ) {
+        if ( name = "x" ) {
+            throw( "Erro, use Get()")
+        }
+    }
+
+    ;__Set( name, params, value ) {
+    ;    if ( name == "x" ) {
+    ;        throw( "Erro de Atribuição, use Set( Values )" )
+    ;    }
+    ;}
+
+    Get() {
+        static _x := 0
+        if ( HasProp( this, "x" ) ) {
+            _x := this.x
+            this.DeleteProp( "x" )
+            return 0
+        }
+        else {
+            return _x
+        }
+    }
+
+    Set( x* ) {
+        
+        if ( x.Length == 1 ) {
+            if ( !HasProp( this, "x" ) ) {
+                this.x := x[ 1 ]
+                this.Get()
+            }
+        }
+        else {
+            return "Erro Set"
+        }
+    }
+
+    /*
     __New() {
         this.Access := false
         this[ 1 ] := 0
@@ -136,7 +184,7 @@ class CoordX {
             ;;}
         }
     }
-
+    */
 
     /*
     SetCoordX( x ) {
