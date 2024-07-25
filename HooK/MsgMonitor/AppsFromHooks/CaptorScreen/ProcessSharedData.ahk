@@ -8,11 +8,11 @@ ProcessSharedData( ) {
     global k_pFn
     global f_flag
     */
-    Text := ""
-    global ghMutex
-    global sharedData
+    ;Text := ""
+    ;global ghMutex
+    ;global sharedData
 
-    
+    global    
 
     ; Bloqueia o mutex para ler os dados compartilhados
     ;if DllCall("WaitForSingleObject", "ptr", ghMutex, "int", 0, "UInt") = 0x00000000 {
@@ -23,6 +23,7 @@ ProcessSharedData( ) {
             lParam := NumGet( sharedData, 8, "Ptr")
             ;Text := " lParam: " sharedData.lParam "`nwParam: " sharedData.wParam
             Text := " lParam: " lParam "`nwParam: " wParam
+
             ;ToolTip( Text )
             
             /*
@@ -44,7 +45,8 @@ ProcessSharedData( ) {
             ; - Escrever em um banco de dados
             ; - Analisar os dados
             ; - Atualizar uma interface gráfica
-        } finally {
+        }
+        finally {
             ; Libera o mutex
             Sleep( 20 )
             freeMutex := myMutex.ReleaseMutex()

@@ -9,6 +9,8 @@
 f_flag := 0
 pfn := ProcessSharedData
 myMutex := Mutex()
+wParam := 0
+lParam := 0
 
 ;Dados a serem compartilhados via Obj - ProcessSharedData.ahk
 ;sharedData := {}
