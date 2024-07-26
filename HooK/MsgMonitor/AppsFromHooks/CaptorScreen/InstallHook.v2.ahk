@@ -87,7 +87,7 @@ InstallHookMKV2(  hM := 0, hK := 0, pfn? ) {
                 MsgBox( text )
             }
         }
-        ToolTip( Text, 1000, 50 )
+        ToolTip( Text )
         if ( !f_flag ) {
 
             return  CallNextHookEx( nCode, wParam, lParam )

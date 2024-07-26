@@ -1,5 +1,5 @@
 ﻿#Include c:\Users\morim\OneDrive\DynamicRegionScren\Mutex\ClasseMutex.ahk
-
+#Include C:\Users\morim\OneDrive\DynamicRegionScren\HooK\MsgMonitor\AppsFromHooks\CaptorScreen\LowLevelMouseProc_wParam.ahk
 ; Usage:
 ; O App obterá os dados, do Hook a ser instalado, necessários para sua execução
 
@@ -8,24 +8,37 @@
 ; AppTest:
 ;*************************************
 
-pFnShared := CallbackCreate( FnShared )
+;pFnShared := CallbackCreate( FnShared )
+
+
+flag := 0
 ObjMutex := Mutex()
-myHook := Hooks( "WH_MOUSE_LL", &pFnShared, &ObjMutex )
-sharedData := Hooks.sharedData
+sharedData := Buffer( 16, 0 )
+myHook := Hooks( "WH_MOUSE_LL", FnShared )
+;,sharedData := Hooks.sharedData
+Text := ""
 
 Esc::ExitApp()
 
-FnShared( &ObjMutex, sharedData ) {
+FnShared() {
+
+    global
+
     Lock := ObjMutex.Lock()
-    if ( Lock  = 0x00000000 ) {
+    if ( Lock = 0 ) {
         try {
             ; Processa lParam e wParam
-            wParam := NumGet( sharedData, 0, "Ptr" )
-            lParam := NumGet( sharedData, 8, "Ptr")
+            ;swParam := NumGet( sharedData, 0, "uint" )
+            ;slParam := NumGet( sharedData, 8, "int64")
             ;Text := " lParam: " sharedData.lParam "`nwParam: " sharedData.wParam
-            Text := " lParam: " lParam "`nwParam: " wParam
+            ;Param := NumGet( sharedData, 0, "Uint" )
+            ;wParam := &Param
 
-            ToolTip( Text )
+            ;Text := " lParam: "  LowLevelMouseProc_wParam( wParam ) ;NumGet( swParam, 0, "UInt" ) "`nnwParam: " swParam
+
+
+
+            ;ToolTip( Text )
             
             /*
             switch {
@@ -52,7 +65,7 @@ FnShared( &ObjMutex, sharedData ) {
             Sleep( 20 )
             freeMutex := ObjMutex.ReleaseMutex()
             if ( !freeMutex ) {
-                Text := "Erro ao liberar o mutex."
+                ;ext := "Erro ao liberar o mutex."
                 ;ToolTip( Text )
             }
         }
@@ -69,45 +82,26 @@ FnShared( &ObjMutex, sharedData ) {
  * Obter as propriedades wParam e lParam do Hook instalado.
 */
 class Hooks {
-    /**
-     * @description sharedData - Dados compartilhados com Fn
-     * @description Fn - função que processará sharedData
-     * @global Por exemplo, x := y := 1 definiria this.x e uma variável local y (que seria liberada assim que todos os inicializadores fossem avaliados).
-     */
-    __Init() {
-        Hooks.flag := 0
-        Hooks.sharedData := Buffer( 16, 0 )
-        Hooks.wParam := 0
-        Hooks.lParam := 0
-        ;Hooks.myMutex := Mutex()
-        ;hooks.hMutex := Hooks.myMutex.hMutex
-        NumPut( "Ptr", Hooks.wParam,
-                "Ptr", Hooks.lParam, 
-                Hooks.sharedData )
-        ; Deverá ser implementado um método estático retorne a CallBack adequada ao nHook
-        ; Hooks.andressCallBack( nHook ) => this.andressCallBack
-        Hooks.andressCallBack := CallbackCreate( this.LowLevelKeyboardProc )
-    }
+   
     /** 
      * @param nHook Hook a ser instalado
      * @param pFnShared Endereço para a função que processara sharedData
      */
-    __New( nHook, &pFnShared, &ObjMutex ) {
+    __New( nHook, FnShared ) {
         ;this.myMutex := ObjMutex
-        ;MsgBox( IsObject( this.myMutex ) )
-        this.flag := 0
+        ;MsgBox( IsObject( this.myMutex ) )flag
         switch nHook {
             case ( "WH_MOUSE_LL" || 14 ):
+                Hooks.andressCallBack := CallbackCreate( Hooks.LowLevelMouseProc )
                 idHook := 14
-                this.andressCallBack := Hooks.andressCallBack
-                this.hMouseHook := this.SetHook( idHook, this.andressCallBack )
+                Hooks.hMouseHook := Hooks.SetHook( idHook, Hooks.andressCallBack )
             default:
                 throw( "Hook no Implemented!" )
         }
         ;this.pFnShared := pFnShared
     }
 
-    SetHook( idHook, andress ) {
+    static SetHook( idHook, andress ) {
         hHook :=
         this.SetWindowsHookEx( idHook, andress )
         if ( !hHook ) {
@@ -117,13 +111,13 @@ class Hooks {
         return hHook
     }
 
-    LowLevelKeyboardProc( nCode, wParam, lParam ) {
+    static LowLevelMouseProc( nCode, wParam, lParam ) {
 
         Critical
         ; Se nCode >= 0
         ; Os parâmetros wParam e lParam contêm informações sobre uma mensagem de teclado.
         if ( nCode >= 0 ) {
-
+            ;Text := ""
             ; Bloqueia o mutex
             Lock := ObjMutex.Lock()
             if ( Lock = 0 ) {
@@ -132,14 +126,12 @@ class Hooks {
                     ; Compartilha lParam e wParam
                     ;sharedData.wParam := wParam
                     ;sharedData.lParam := lParam
-
-                    NumPut( "Ptr", Hooks.wParam,
-                            "Ptr", Hooks.lParam,
-                            Hooks.sharedData )
+                    Text := LowLevelMouseProc_wParam( wParam ) 
+                    ;NumPut( "int64", lParam, sharedData, 8 )
                     Sleep( 1 )
-
+                    ToolTip( Text )
                     ; Sinaliza para processar os dados (pode ser um thread separado)
-                    SetTimer( pFnShared, -1 )
+                    SetTimer( FnShared, -1 )
                     ; Para pFnShared consulte:
                     ; Ver:C:\Users\morim\OneDrive\DynamicRegionScren\HooK\MsgMonitor\AppsFromHooks\CaptorScreen\ProcessSharedData.ahk
                 }
@@ -153,16 +145,16 @@ class Hooks {
                 }
             }
         }
-
-        if ( this.flag ) {
-            return  this.CallNextHookEx( nCode, wParam, lParam )
+        
+        if ( !flag ) {
+            return  Hooks.CallNextHookEx( nCode, wParam, lParam )
         }
         else {            
             return 1
         }                
     }
 
-    CallNextHookEx( nCode, wParam, lParam, hHook := 0 ) {
+    static CallNextHookEx( nCode, wParam, lParam, hHook := 0 ) {
         
         LRESULT :=
         DllCall(
@@ -176,7 +168,7 @@ class Hooks {
         return LRESULT
     }
 
-    SetWindowsHookEx( idHook, pfn ) {
+    static SetWindowsHookEx( idHook, pfn ) {
         hModule := this.GetModuleHandle()
         hHook :=
         DllCall(
@@ -190,7 +182,7 @@ class Hooks {
         return hHook
     }
 
-    GetModuleHandle() {
+    static GetModuleHandle() {
         hModule :=
         DllCall( 
             "GetModuleHandle", 
@@ -201,7 +193,7 @@ class Hooks {
         return hModule
     }
 
-    Unhook( hHook ) {
+    static Unhook( hHook ) {
         Bool :=
         DllCall(
             "UnhookWindowsHookEx",
@@ -211,23 +203,23 @@ class Hooks {
         return Bool
     }
 
-    UnhookAll() {
+    static UnhookAll() {
         /*
         if ( IsSet( hHookKeybd ) ){
             BoolKeybd := Unhook( hHookKeybd )
             CallbackFree( andressK )
         }
         */
-        if ( this.hMouseHook ) {
-            BoolMouse := this.Unhook( this.hMouseHook )
-            if ( hooks.andressCallBack ) {
-                CallbackFree( hooks.andressCallBack )
+        if ( Hooks.hMouseHook ) {
+            BoolMouse := Hooks.Unhook(Hooks.hMouseHook )
+            if ( Hooks.andressCallBack ) {
+                CallbackFree( Hooks.andressCallBack )
             }
         }
         ;ExitApp()
     }
 
     __Delete() {
-        this.UnhookAll()
+        Hooks.UnhookAll()
     }
 }
