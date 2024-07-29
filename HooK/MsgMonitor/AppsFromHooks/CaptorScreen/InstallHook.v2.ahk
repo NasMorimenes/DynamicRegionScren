@@ -32,6 +32,7 @@ InstallHookMKV2(  hM := 0, hK := 0, pfn? ) {
     */
 
     SetHook( idHook, andress ) {
+        
         hHook :=
         SetWindowsHookEx( idHook, andress )
         if ( !hHook ) {
@@ -57,29 +58,31 @@ InstallHookMKV2(  hM := 0, hK := 0, pfn? ) {
 
         if ( nCode >= 0 ) {
             ; Bloqueia o mutex
-            
+            ;ListVars()
             ;if DllCall("WaitForSingleObject", "ptr", ghMutex, "int", 0xFFFFFFFF, "UInt") = 0x00000000 {
             result := WaitForSingleObject( ghMutex, 0 )
             if ( result = 0 ) {
-                text := wParam
+                ;text := wParam
                 try {
                     ; Compartilha lParam e wParam
                     ;sharedData.wParam := wParam
                     ;sharedData.lParam := lParam
-
                     NumPut( "Ptr", wParam, sharedData, 0 )
                     NumPut( "Ptr", lParam, sharedData, 8 )
+                    text := nCode
+                    ;NumGet( wParam, 0, "Ushot" ) "`n"
+                    ;text .= NumGet( wParam, 2, "Ushot" )
                     Sleep( 1 )
 
                     ; Sinaliza para processar os dados (pode ser um thread separado)
                     SetTimer( pfnH, -1 )
-                } finally {
-                    ; Libera o mutex
-                    if !DllCall("ReleaseMutex", "ptr", ghMutex)
-                        MsgBox( "Erro ao liberar o mutex." )
-                    
-                    ;Sleep( 1000 )
-                }
+                    } finally {
+                        ; Libera o mutex
+                        if !DllCall("ReleaseMutex", "ptr", ghMutex)
+                            MsgBox( "Erro ao liberar o mutex." )
+                        
+                        ;Sleep( 1000 )
+                    }
             }
             else {
                 text := result
@@ -99,7 +102,6 @@ InstallHookMKV2(  hM := 0, hK := 0, pfn? ) {
     }
 
     CallNextHookEx( nCode, wParam, lParam, hHook := 0 ) {
-        
         LRESULT :=
         DllCall(
             "CallNextHookEx",
@@ -112,7 +114,8 @@ InstallHookMKV2(  hM := 0, hK := 0, pfn? ) {
         return LRESULT
     }
 
-    SetWindowsHookEx( idHook, pfn ) {
+    SetWindowsHookEx( idHook, pfn ) {        
+        ListVars()
         hModule := GetModuleHandle()
         hHook :=
         DllCall(

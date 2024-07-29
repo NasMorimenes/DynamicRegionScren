@@ -1,17 +1,20 @@
-﻿class Mutex {
-    __New() {
-        this.mutex := DllCall("CreateMutex", "Ptr", 0, "Int", 0, "Ptr", 0, "Ptr")
-    }
+﻿    class Mutex {
 
-    Lock() {
-        return DllCall("WaitForSingleObject", "Ptr", this.mutex, "UInt", 0xFFFFFFFF) == 0
-    }
+        __New( Name? ) {
+            this.Name := 0
+            ( IsSet( Name ) && this.Name := StrPtr( Name ) )
+            this.mutex := DllCall("CreateMutex", "Ptr", 0, "Int", 0, "Ptr", this.Name, "Ptr" )
+        }
 
-    Unlock() {
-        return DllCall("ReleaseMutex", "Ptr", this.mutex)
-    }
+        Lock() {
+            return DllCall("WaitForSingleObject", "Ptr", this.mutex, "UInt", 0xFFFFFFFF) == 0
+        }
 
-    __Delete() {
-        DllCall("CloseHandle", "Ptr", this.mutex)
+        Unlock() {
+            return DllCall("ReleaseMutex", "Ptr", this.mutex)
+        }
+
+        __Delete() {
+            DllCall("CloseHandle", "Ptr", this.mutex)
+        }
     }
-}
