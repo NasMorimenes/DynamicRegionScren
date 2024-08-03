@@ -1,7 +1,9 @@
 ﻿;#Include ClassMutex.V0.ahk
 ;Code := 0
-Ass := Hook( 13 )
-Ass.SetWindowsHookEx()
+
+
+Ass := Hook()
+
 
 ;ToolTip( Code )
 ;ListVars()
@@ -31,12 +33,7 @@ class Hook {
     __New( idHook := 14 , fnApp := "" ) {
 
         this.andressCallBack := CallbackCreate( ObjBindMethod( this, "Fn"  ), "Fast", 3  )
-        this.hModule := 
-        DllCall( 
-            "GetModuleHandle", 
-            "Ptr", 0,
-            "Ptr"
-        )
+        this.hModule := this.GetHandle()
         switch idHook {
             case 0 || 14:
                 ;this.Name := "MouseHook"
@@ -48,9 +45,11 @@ class Hook {
                 ;    this.fnApp := this.appFn()
                 ;}
                 ;( !IsObject( fnApp ) ? this.fnApp := this.appFn() : this.fnApp := fnApp )
+                this.SetWindowsHookEx()
             case 13:
                 this.idHook := this.Set_idHook( 13 )
                 this.flag := this.Set_flag()
+                this.SetWindowsHookEx()
             default:
                 
         }
@@ -65,6 +64,17 @@ class Hook {
     ;appFn( i := 0 ) => i == 0 ? ( this.idHook == 14 ? ToolTip( "Set AppFn! 14" ) : ToolTip( "Set AppFn! 13", 100, 150 ) ) : ToolTip( ) 
 
     appFn( i := 0 ) => i == 0 ? ToolTip( "Set AppFn!" ) : ToolTip( "" )
+
+    GetHandle() {
+        handle := 
+        DllCall( 
+            "GetModuleHandle", 
+            "Ptr", 0,
+            "Ptr"
+        )
+
+        return handle
+    }
 
     Fn( nCode, wParam, lParam ) {
 

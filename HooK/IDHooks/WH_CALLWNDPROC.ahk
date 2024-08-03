@@ -5,6 +5,7 @@
  * @date 2024/07/01
  * @version 0.0.0
  ***********************************************************************/
+WH_CALLWNDPROC( ,1 )
 WH_CALLWNDPROC( Value := "Int", test := 0 ) {
     if ( test ) {
         if test = 1

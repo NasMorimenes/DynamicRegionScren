@@ -19,7 +19,7 @@ class Point {
             Posi := RegExMatch( this.param, "\s*(IntX\d*)\s+(IntY\d*)\s*", &Coordinates )
             if ( Coordinates.Count > 1 )
             ;Coordinates := StrSplit( this.param, [ "IntX", "IntY"] )
-            this.X := ( ( Type( Coordinates[ 1 ] ) != "Integer" ) ) ; && Coordinates[ 1 ] := 0 )
+                this.X := ( ( Type( Coordinates[ 1 ] ) != "Integer" ) ) ; && Coordinates[ 1 ] := 0 )
         }
         
     }
