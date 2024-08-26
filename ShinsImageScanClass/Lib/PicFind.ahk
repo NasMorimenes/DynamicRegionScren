@@ -25,9 +25,9 @@ int __attribute__((__stdcall__)) PicFind(
 {
 
 int o, i, j, x, y, r, g, b, rr, gg, bb, max, e1, e0, ok;
-  int o1, x1, y1, w1, h1, sx1, sy1, len1, len0, err1, err0;
-  int o2, x2, y2, w2, h2, sx2, sy2, len21, len20, err21, err20;
-  int r_min, r_max, g_min, g_max, b_min, b_max;
+	int o1, x1, y1, w1, h1, sx1, sy1, len1, len0, err1, err0;
+	int o2, x2, y2, w2, h2, sx2, sy2, len21, len20, err21, err20;
+	int r_min, r_max, g_min, g_max, b_min, b_max;
 */
 
 /*
@@ -46,6 +46,8 @@ allpos: Array para armazenar as posições (coordenadas) onde as correspondênci
 allpos_max: Número máximo de correspondências a serem armazenadas.
 */
 
+
+/*
 Str := "zzzzzzzzzzzzzzzzzw3zy0Dz03zk4Ts27y70zUUDs07z01zk0zy0TzsDzzzzzzzzzzy"
 text := StrSplit( Str )
 
@@ -61,14 +63,14 @@ PicFind(
 	text, ;Buffer( 0, 0 ), ; text armazena o padrão de pesquisa.
 	allpos_max, ;Número máximo de correspondências a serem armazenadas.
 	allpos := Buffer( 0, 0 ), ;Array para armazenar as posições (coordenadas) onde as correspondências são encontradas.
-    bmp := Buffer( 0, 0 ), ;Ponteiro para os dados da imagem na qual a busca será realizada.
+		bmp := Buffer( 0, 0 ), ;Ponteiro para os dados da imagem na qual a busca será realizada.
 	gs := Buffer( 0, 0 ), ; gs armazena valores de escala de cinza
 	ss := Buffer( 0, 0 ), ; ss armazena os resultados binários da comparação
 	s1 := s0 := Buffer( 0, 0 ), ; Arrays que armazenam os índices dos pixels que precisam ou não precisam corresponder ao padrão.
 	input := [ 0, 0, 0, 0, 0, 0, 0 ] ;Contém diversos parâmetros de configuração, como dimensões de subimagens e limites de erro.
-    ) { 
+		) { 
 	
-    static i
+		static i
 	ok := 0 ;ok=0
 	
 	w1 := input[ 2 ] ;NumGet( input, 4, "Int" ) ;w1=input[1];
@@ -85,124 +87,271 @@ PicFind(
 	j := 0,	y := 0,	x := 0
 	
 	while ( j < num ) { ;&& y := y + 1 )
-        o := input[ j ]
-        o1 := input[ j ]
-        o2 := input[ j ]
-        w2 := input[ j + 1] 
-        h2 := input[ j + 2 ]
+				o := input[ j ]
+				o1 := input[ j ]
+				o2 := input[ j ]
+				w2 := input[ j + 1] 
+				h2 := input[ j + 2 ]
 
-        while ( y < h2 ) {
+				while ( y < h2 ) {
 
-            while ( x < w2 ) {
+						while ( x < w2 ) {
 
-                i := ( mode == 3 ) ? ( y * Stride + x * 4 ) : ( y * sw + x )
+								i := ( mode == 3 ) ? ( y * Stride + x * 4 ) : ( y * sw + x )
 
-                if ( text[ o++ ] == '1' ) 
-                    s1[ o1++ ] := i
-                else
-                    s0[ o2++ ] := i
+								if ( text[ o++ ] == '1' ) 
+										s1[ o1++ ] := i
+								else
+										s0[ o2++ ] := i
 
-                ++x
-            }
-            ++y
-        }
-        ++j
-    }
+								++x
+						}
+						++y
+				}
+				++j
+		}
 }
 
 
 MsgBox GetStride( 8, 32 )
+*/
 
-GetStride( biWidth, biBitCount ) {
-	return ((biWidth * biBitCount + 31) & ~31) >> 3
+;text := [ 76 ,150 ,29 , 0, 226, 105, 178, 0 ,0 , 255, 128, 0, 226, 105, 0]	
+text := [ 0, 1, 0, 1, 1, 1, 0, 1, 1 ]
+	
+	
+
+h := 3
+w := 3
+s0 := Array()
+;s0.Capacity := w * h
+s1 := Array()
+;s1.Capacity := w * h
+sw := 3 ;deve ser menor ou igual w
+mode := 4
+Stride := GetStride( 3, 4 )
+LookupTable( sw, Stride, h, w, mode, s1, s0 ) 
+
+LookupTable( sw, Stride, h, w, mode, s1, s0 ) {
+
+	o := 0, new_h := h, new_w := w, len0 := 1, len1 := 1, Dss := 0
+
+	Loop ( h ) {
+		y := A_Index
+
+		loop ( w ) {
+			x := A_Index
+
+			if ( mode == 4 ) {
+				Ass := ( ( y - 1 ) * new_h // h )
+				Dss := ( ( x - 1 ) * new_w // w )
+				i := Ass * Stride + Dss * 4
+
+			}
+			else {
+
+				Ass := ( y * new_h / h )
+				Dss := ( x * new_w / w )
+				i := Ass * sw + Dss
+			}
+			++o
+			if ( text[ o ] == 1 ) {
+				
+				s1.InsertAt( len1, i  )
+				len1++
+			}
+			else {
+
+				s0.InsertAt( len0, i )
+				++len0
+			}
+			
+		}
+		
+	}
+
 }
 
-
+GetStride( biWidth, biBitCount ) {
+	return ( (biWidth * biBitCount + 31 ) & ~31) >> 3
+}
 
 
 
 /*
 
+text := [ 1, 0,
+	0, 1 ]
 
+h := 2
+w := 2
+s0 := Array()
+s1 := Array()
+sw := 16
+mode := 4
+Stride := GetStride(2, 4)
+LookupTable(sw, Stride, h, w, mode, s1, s0)
 
+MsgBox( "s1: " s1.MaxIndex() . " " . s1[1] . " " . s1[2] )
+MsgBox( "s0: " s0.MaxIndex() . " " . s0[1] . " " . s0[2] )
 
+LookupTable(sw, Stride, h, w, mode, s1, s0) {
+o := 0, new_h := h, new_w := w, len0 := 1, len1 := 1, x := 0, y := 0
 
-
-
-
-
-// Start Lookup
-  
-  sx1 = sw - w1
-  sy1 = sh - h1
-  
-  for ( y=0; y <= sy1; y++)
-  {
-    for (x=0; x<=sx1; x++)
-    {
-      o=y*sw+x; e1=err1; e0=err0;
-      if (e0==len0)
-      {
-        for (i=0; i<len1; i++)
-          if (ss[o+s1[i]]!=1 && (--e1)<0)
-            goto NoMatch1;
-      }
-      else
-      {
-        for (i=0; i<max; i++)
-        {
-          if (i<len1 && ss[o+s1[i]]!=1 && (--e1)<0)
-            goto NoMatch1;
-          if (i<len0 && ss[o+s0[i]]!=0 && (--e0)<0)
-            goto NoMatch1;
-        }
-      }
-      //------------------
-      // Combination lookup
-      if (num>7)
-      {
-        x1=x+w1-1; y1=y-offsetY; if (y1<0) y1=0;
-        for (j=7; j<num; j+=7)
-        {
-          o2=input[j]; w2=input[j+1]; h2=input[j+2];
-          len21=input[j+3]; len20=input[j+4];
-          err21=input[j+5]; err20=input[j+6];
-          sx2=sw-w2; i=x1+offsetX; if (i<sx2) sx2=i;
-          sy2=sh-h2; i=y+offsetY; if (i<sy2) sy2=i;
-          for (x2=x1; x2<=sx2; x2++)
-          {
-            for (y2=y1; y2<=sy2; y2++)
-            {
-              o1=y2*sw+x2; e1=err21; e0=err20;
-              for (i=0; i<len21; i++)
-              {
-                if (ss[o1+s1[o2+i]]!=1 && (--e1)<0)
-                  goto NoMatch2;
-              }
-              if (e0!=len20)
-              {
-                for (i=0; i<len20; i++)
-                  if (ss[o1+s0[o2+i]]!=0 && (--e0)<0)
-                    goto NoMatch2;
-              }
-              goto MatchOK;
-              NoMatch2:
-              continue;
-            }
-          }
-          goto NoMatch1;
-          MatchOK:
-          x1=x2+w2-1;
-        }
-      }
-      //------------------
-      allpos[ok++]=(sy+y)<<16|(sx+x);
-      if (ok>=allpos_max)
-        goto Return1;
-      // Clear the image that has been found
-      for (i=0; i<len1; i++)
-        ss[o+s1[i]]=0;
-      NoMatch1:
-      continue;
-    }
+Loop ( h ) {
+  ++y
+  loop ( w ) {
+	  ++x
+	  if (mode == 4) {
+		  Ass := ( y * new_h / h )
+		  Dss := ( x * new_w / w )
+		  i := Ass * Stride + Dss * 4
+	  } else {
+		  Ass := ( y * new_h / h )
+		  Dss := ( x * new_w / w )
+		  i := Ass * sw + Dss
+	  }
+	  ++o
+	  if (text[o] == 1) {
+		  s1.InsertAt(len1, i)
+		  len1++
+	  } else {
+		  s0.InsertAt(len0, i)
+		  ++len0
+	  }
   }
+  x := 0
+}
+}
+
+GetStride(biWidth, biBitCount) {
+return ((biWidth * biBitCount + 31) & ~31) >> 3
+}
+
+
+
+text := [ 1, 0,
+	0, 1 ]
+
+; Definindo variáveis e arrays (lists em AHK)
+;input := [ ... ]  ; Presumindo que input é uma lista já preenchida
+;text := "..." ; Presumindo que text é uma string de caracteres
+s1 := []
+s0 := []
+
+; Inicializando variáveis
+num := text.Length  ; Número de elementos no vetor input
+mode := 4 ; Definir o modo conforme necessário
+Stride := GetStride( 2, 4) ; Largura da imagem em bytes
+sw := 20 ; Largura da subimagem
+
+; Gerando a Tabela de Lookup
+Loop num // 7
+{
+    j := A_Index * 7 - 7
+    o := input[j]
+    o1 := o
+    o2 := o
+    w2 := input[j+1]
+    h2 := input[j+2]
+
+    Loop, % h2
+    {
+        y := A_Index - 1
+        Loop, % w2
+        {
+            x := A_Index - 1
+            if (mode == 3)
+                i := y * Stride + x * 4
+            else
+                i := y * sw + x
+
+            if (SubStr(text, ++o, 1) == "1")
+                s1[o1++] := i
+            else
+                s0[o2++] := i
+        }
+    }
+}
+
+GetStride(biWidth, biBitCount) {
+	return ((biWidth * biBitCount + 31) & ~31) >> 3
+}
+
+
+/*
+// Start Lookup
+	
+	sx1 = sw - w1
+	sy1 = sh - h1
+	
+	for ( y=0; y <= sy1; y++)
+	{
+		for (x=0; x<=sx1; x++)
+		{
+			o=y*sw+x; e1=err1; e0=err0;
+			if (e0==len0)
+			{
+				for (i=0; i<len1; i++)
+					if (ss[o+s1[i]]!=1 && (--e1)<0)
+						goto NoMatch1;
+			}
+			else
+			{
+				for (i=0; i<max; i++)
+				{
+					if (i<len1 && ss[o+s1[i]]!=1 && (--e1)<0)
+						goto NoMatch1;
+					if (i<len0 && ss[o+s0[i]]!=0 && (--e0)<0)
+						goto NoMatch1;
+				}
+			}
+			//------------------
+			// Combination lookup
+			if (num>7)
+			{
+				x1=x+w1-1; y1=y-offsetY; if (y1<0) y1=0;
+				for (j=7; j<num; j+=7)
+				{
+					o2=input[j]; w2=input[j+1]; h2=input[j+2];
+					len21=input[j+3]; len20=input[j+4];
+					err21=input[j+5]; err20=input[j+6];
+					sx2=sw-w2; i=x1+offsetX; if (i<sx2) sx2=i;
+					sy2=sh-h2; i=y+offsetY; if (i<sy2) sy2=i;
+					for (x2=x1; x2<=sx2; x2++)
+					{
+						for (y2=y1; y2<=sy2; y2++)
+						{
+							o1=y2*sw+x2; e1=err21; e0=err20;
+							for (i=0; i<len21; i++)
+							{
+								if (ss[o1+s1[o2+i]]!=1 && (--e1)<0)
+									goto NoMatch2;
+							}
+							if (e0!=len20)
+							{
+								for (i=0; i<len20; i++)
+									if (ss[o1+s0[o2+i]]!=0 && (--e0)<0)
+										goto NoMatch2;
+							}
+							goto MatchOK;
+							NoMatch2:
+							continue;
+						}
+					}
+					goto NoMatch1;
+					MatchOK:
+					x1=x2+w2-1;
+				}
+			}
+			//------------------
+			allpos[ok++]=(sy+y)<<16|(sx+x);
+			if (ok>=allpos_max)
+				goto Return1;
+			// Clear the image that has been found
+			for (i=0; i<len1; i++)
+				ss[o+s1[i]]=0;
+			NoMatch1:
+			continue;
+		}
+	}
