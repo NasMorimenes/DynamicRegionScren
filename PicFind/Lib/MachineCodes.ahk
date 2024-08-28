@@ -334,7 +334,7 @@ myPic() {
 }
 
 
-GetBitsFromScreen(captureX, captureY, captureWidth, captureHeight, flag:= 1 ) {
+GetBitsFromScreen(captureX, captureY, captureWidth, captureHeight, Setbpp := 32, flag:= 1 ) {
 	static ID := 0
 
 	if flag = 0 {
@@ -355,6 +355,11 @@ GetBitsFromScreen(captureX, captureY, captureWidth, captureHeight, flag:= 1 ) {
 	static Bits := 0
 	static ppvBits := 0
 	global scan
+    global biBitCount
+    global Stride
+
+    ( Setbpp !=32 && biBitCount := Setbpp )
+    ( !IsSet( biBitCount ) && biBitCount := 32 )
 
 	if (!ID ) {
 		ID := WinGetID("A")
@@ -362,9 +367,7 @@ GetBitsFromScreen(captureX, captureY, captureWidth, captureHeight, flag:= 1 ) {
 
 	sizeScan := captureWidth * captureHeight * 4
 	Scan := Buffer( sizeScan, 0 )
-	Stride := ((captureWidth * 32 + 31) // 32) * 4
-
-    MsgBox( Stride )
+    ( !IsSet( Stride ) && GetStride( captureWidth ) )
 
 	Win := DllCall("GetDesktopWindow", Ptr) ;DllCall("GetForegroundWindow",Ptr) -> Janela ativa
 	HDC := DllCall("GetWindowDC", Ptr, Win, Ptr)
@@ -375,7 +378,7 @@ GetBitsFromScreen(captureX, captureY, captureWidth, captureHeight, flag:= 1 ) {
 	NumPut("Int", captureWidth, BI, 4)
 	NumPut("Int", -captureHeight, BI, 8)
 	NumPut("Short", 1, BI, 12)
-	NumPut("Short", 32, BI, 14)
+	NumPut("Short", biBitCount, BI, 14)
 
 	hBM := DllCall("CreateDIBSection"
 									, Ptr, MDC
@@ -414,9 +417,11 @@ GetBitsFromScreen(captureX, captureY, captureWidth, captureHeight, flag:= 1 ) {
 ;Stride := GetStride( sw )
 
 ColorDifferenceAhk( c, n, pBmp, pss, sy, sx, sw, sh) {
+    
     GetbiBitCount()
-    Stride := GetStride( sw )
-
+    global Stride
+    ( IsSet( Stride ) && GetStride( 32 ) )
+MsgBox Stride
     o := sy * Stride + sx * 4
     j := Stride - sw * 4
 
@@ -431,16 +436,14 @@ ColorDifferenceAhk( c, n, pBmp, pss, sy, sx, sw, sh) {
     dR := r * r
     dG := g * g
     dB := b * b
-
-    y := 0
-    x := 0
+    
     loop sh {
         
-        loop Stride {
+        loop sw {
 
-            r := NumGet( pBmp, ( 2 + o ), "UChar" ) - rr
-            g := NumGet( pBmp, ( 1 + o ), "UChar" ) - gg
-            b := NumGet( pBmp, o, "UChar" ) - bb
+            r := NumGet( pBmp, 2 + o, "UChar" ) - rr
+            g := NumGet( pBmp, 1 + o, "UChar" ) - gg
+            b := NumGet( pBmp,     o, "UChar" ) - bb
 
             aSS := ( r * r <= dR && g * g <= dG && b * b <= dB ) ? 1 : 0 
 
@@ -448,12 +451,8 @@ ColorDifferenceAhk( c, n, pBmp, pss, sy, sx, sw, sh) {
             o += 4
         }
         o += j
-        y := A_Index
     }
 }
-
-
-
 
 /*
 // (mode==3) Color Difference Mode
@@ -507,9 +506,8 @@ Stride2 := GetStride( 5 )
 ;12  ; 3 pixels * 4 bytes por pixel
 */
 
-
-c := 0xFF000000          ; Cor vermelha pura
-n := 0x20202000          ; Limite de diferença
+c := 0x000000          ; Cor vermelha pura
+n := 0x202000         ; Limite de diferença
 sw := 4                ; Largura da sub-região
 sh := 3                ; Altura da sub-região
 sy := 0                ; Coordenada y inicial
@@ -530,8 +528,8 @@ Loop Stride2 * sh
 
 */
 ss2 := Buffer( sw * sh, 0)
-scan :=0
-GetBitsFromScreen( 40, 40 sw, sh, 1 )
+Scan := 0
+GetBitsFromScreen( 40, 40, sw, sh )
 
 ;MsgBox( scan )
 ;loop sw * sh
@@ -556,8 +554,8 @@ DllCall(
 
 MsgBox( gf)
 */
-loop sw * sh * 3 {
-    MsgBox( NumGet( ss2.Ptr, A_Index - 1, "UChar") )
+loop sw * sh {
+    MsgBox( NumGet( ss2.Ptr, A_Index - 1, "UChar")  "`nIndice - " A_Index - 1 )
 }
 ; Exibir resultados
 ;MsgBox("Resultados para Cenário 2: " ss2.RawData )
@@ -686,7 +684,9 @@ ExampleImg() {
 
 GetStride( biWidth ) {
     global biBitCount
-    return ( ( biWidth * biBitCount + 31 ) & ~31) >> 3
+    global Stride
+    ( !IsSet( Stride ) &&  Stride := ( ( biWidth * biBitCount + 31 ) & ~31 ) >> 3 ) 
+    return 
 }
 
 
