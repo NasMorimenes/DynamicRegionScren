@@ -1,0 +1,259 @@
+﻿/*
+// Função para o modo 4 (Color Difference Mode)
+int PicFind_ColorDifferenceMode(unsigned int c, unsigned int n, unsigned char *Bmp, int Stride,
+                                 int sw, int sh, char *ss) {
+    // Variáveis para as componentes R, G, B da cor especificada
+    int r, g, b;
+    // Variáveis para as componentes R, G, B do limiar de diferença de cor
+    int rr, gg, bb;
+    // Variáveis para iteração
+    int x, y, o, i;
+
+    // Extrai os componentes R, G, B da cor especificada
+    r = (c >> 16) & 0xFF;
+    g = (c >> 8) & 0xFF;
+    b = c & 0xFF;
+
+    // Extrai os componentes R, G, B do limiar de diferença de cor
+    rr = (n >> 16) & 0xFF;
+    gg = (n >> 8) & 0xFF;
+    bb = n & 0xFF;
+
+    // Itera sobre a área de busca na imagem
+    o = 0;
+    for (y = 0; y < sh; y++) {
+        for (x = 0; x < sw; x++, o += 4) {
+            // Calcula o índice do pixel no vetor ss
+            i = y * sw + x;
+            // Calcula a diferença de cor entre o pixel atual e a cor de referência
+            int diff_r = abs(Bmp[2 + o] - r);
+            int diff_g = abs(Bmp[1 + o] - g);
+            int diff_b = abs(Bmp[o] - b);
+            // Verifica se a diferença de cor está dentro do limiar especificado
+            if (diff_r <= rr && diff_g <= gg && diff_b <= bb) {
+                // Define o valor correspondente no vetor ss como 1
+                ss[i] = 1;
+            } else {
+                // Define o valor correspondente no vetor ss como 0
+                ss[i] = 0;
+            }
+        }
+    }
+
+    // Retorna código de sucesso
+    return 0; // OK
+}
+
+*/
+
+c := 4288008348
+n := 4290697115
+Stride := 0
+Scan := 0
+
+Hex := "4157415641554154555756534881ec380100000f29b424900000000f29bc24a0000000440f298424b0000000440f298c24c0000000440f299424d0000000440f299c24e0000000440f29a424f0000000440f29ac2400010000440f29b42410010000440f29bc24200100008bbc24a00100000fb6c589cd89d34c898424900100004189c48b8424a8010000c1ed100fb6f6c1eb10400fb6ed440fb6e9440fb6f20fb6db85c00f8eea04000085ff0f8ee20400008d04bd000000008d57ff660f6ec54863cf4898660f61c08994248c0000004c8b9424b0010000488944247089d0660f70e00066410f6ec4c1e804660f61c048894c246866440f6f3d0000000048c1e004660f70e8000f296424304989c789d00f296c244083e0f0c744245c000000008d1485000000004889442478488d048dffffffff89942488000000c74424580000000048898424800000000f1f008b44245c8d0c8500000000488b8424800000004c01c04939c2488b4424680f93c24c01d04939c048894424600f93c008c20f848104000083bc248c0000000f0f867304000066410f6ec5660f6eeb66450fefd231c0660f61c066440f70f50066410f6eee660f70e00066440f70dd00660fefed0f29642420660f6ee666440f70ec00660fefe466410f6ff566450f6fee66440f6ff60f1f00f3410f6f3c8066410f6ff7f3410f6f448010f3410f6f4c8030f3410f6f54803066410fdbc766410fdbff660f6f5c243066440f6f642420660f67f8f3410f6f44802066410fdbcf660fdbf7660f71d70866410fdbc7660f71d208660f67c166410f6fcf660fdbc8660f71d008660f67f1660f67f8f3410f6f0c80f3410f6f44801066440f6fc766410f68fa660f71d008660f71d10866450f60c2660f67c8f3410f6f44802066440ff9c3660ff9fb66410fdbcf660f71d008660f67c2660f6f54244066410fdbc7660f67c8660f6fc566410ff9c0660f6fd966410f68ca66440feec0660f6fc566410f60da660ff9c7660ff9da660feef8660f6fc5660ff9ca660ff9c3660f6fd666410f68f2660feed8660f6fc566410f60d2660ff9c166410ff9d4660feec8660f6fc566410ff9f4660ff9c266450f6fe0660feed0660f6fc5660ff9c6660feef0660f6fc566410f65c066440f61e00f290424660f6fc366440f69042466450f6fcc66450f66cd66450f66c566450f6fe166440f76c466440f6fcd66440f65cb66440f76e466410f61c1440f294c2410660f695c241066440f6fc866450f66ce66410f66de66410f6fc1660f76dc660f76c466440fdbc366440fdbe0660f6fc266450f6fcc66440f6fe566440f65e266410f69d466410f61c466440f6fe566410f66d366410f66c366440f65e7660f6fda660f76c4660f76dc66410fdbc166440f6fcd66410fdbd866440f65c9660f6fd0660f61c3660f69d3660f6fd8660f61c2660f69da660f61c3660f6fdf66410f69fc66410f61dc66410f66fd66410fdbc766410f66dd660f76fc660f76dc66440f6fc3660f6fd966410f69c966410f61d966410f66ce66410f66de660f76cc660f6fd366410f6fd866440f6fc5660f76d466440f65c6660fdbf9660fdbda660f6fd666410f69f066410f61d066410f66f366410f66d3660f76f4660f76d4660fdbfe660fdbd3660f6fca660f61d7660f69cf660f6fda660f69d9660f61d1660f61d366410fdbd7660f67c2660fdb0510000000410f1104024883c0104939c70f8504fdffff8b8424880000008d1401488b4c24784863d24803942490010000eb1141c6040a004883c1014883c20439cf7e600fb6420229e84189c141c1f91f4431c84429c839c30fb64201410f9dc34429e04189c141c1f91f4431c84429c839c60f9dc04184c374b80fb6024429e84189c141c1f91f4431c84429c84139c67ca041c6040a014883c1014883c20439cf7fa083442458014c8b542460017c245c8b4424584c03442470398424a80100000f85bbfbffff0f28b4249000000031c00f28bc24a0000000440f288424b0000000440f288c24c0000000440f289424d0000000440f289c24e0000000440f28a424f0000000440f28ac2400010000440f28b42410010000440f28bc24200100004881c4380100005b5e5f5d415c415d415e415fc30f1f44000089f84c89c24d8d0c80eb1a0f1f44000041c602004883c2044983c2014939d10f8444ffffff0fb642014429e089c1c1f91f31c829c839c60fb64202410f9dc329e889c1c1f91f31c829c839c30f9dc04184c374bc0fb6024429e889c1c1f91f31c829c84139c67ca841c60201eba690909090909090909090ff00ff00ff00ff00ff00ff00ff00ff0001010101010101010101010101010101"
+
+#x:: {
+
+    global
+
+    GetbiBitCount()
+    sh := 20
+    sw := 60
+
+    GetStride( sw )
+
+    ss := Buffer( sh * sw, 0 )
+    GetBitsFromScreen( 150, 300, sw, sh )
+
+    code := MCode( Hex )
+    Call( code, c, n, Scan, ss, sw, sh, Stride )
+
+    Viso( ss, sh, sw )
+}
+
+Esc::ExitApp()
+
+Call(
+    code,
+    c,
+    n,
+    Bmp,
+    ss,
+    sw,
+    sh,
+    Stride
+)
+{
+
+    result :=
+    DllCall(
+        code,
+        "Uint", c,
+        "UInt", n,
+        "UPtr", Bmp.Ptr,
+        "Int", Stride,
+        "Int", sh,
+        "Int", sw,
+        "Ptr", ss.Ptr,
+        "Int"
+    )
+
+    return result
+}
+
+MCode( hex ) {
+	len := StrLen( hex) // 2
+	code := Buffer( len, 0 )
+	DllCall(
+		"crypt32\CryptStringToBinary",
+		"Str", hex,
+		"uint", 0,
+		"uint", 4,
+		"Ptr", code,
+		"uint*", &len,
+		"Ptr", 0,
+		"Ptr", 0
+	)
+		DllCall(
+		"VirtualProtect",
+		"Ptr", code,
+		"Ptr", len,
+		"uint", 0x40,"Ptr*", 0
+	)
+	return code
+}
+
+GetBitsFromScreen(captureX, captureY, captureWidth, captureHeight, Setbpp := 32, flag:= 1 ) {
+	static ID := 0
+
+	if flag = 0 {
+		MsgBox
+		(
+		"Defina " Chr(34) "Flag" Chr(34)
+		)
+
+		ExitApp
+	}
+	if flag = 1 {
+		captureX := captureX - 10
+		captureY := captureY - 10
+	}
+
+	static Ptr := A_PtrSize ? "UPtr" : "UInt"
+	static PtrP := Ptr "*"
+	static Bits := 0
+	static ppvBits := 0
+	global scan
+    global biBitCount
+    global Stride
+
+    ( Setbpp !=32 && biBitCount := Setbpp )
+    ( !IsSet( biBitCount ) && biBitCount := 32 )
+
+	if (!ID ) {
+		ID := WinGetID("A")
+	}
+
+	sizeScan := captureWidth * captureHeight * 4
+	Scan := Buffer( sizeScan, 0 )
+    ( !IsSet( Stride ) && GetStride( captureWidth ) )
+
+	Win := DllCall("GetDesktopWindow", Ptr) ;DllCall("GetForegroundWindow",Ptr) -> Janela ativa
+	HDC := DllCall("GetWindowDC", Ptr, Win, Ptr)
+	MDC := DllCall("CreateCompatibleDC", Ptr, HDC, Ptr)
+
+	BI := Buffer(40, 0)
+	NumPut("UInt", 40, BI, 0)
+	NumPut("Int", captureWidth, BI, 4)
+	NumPut("Int", -captureHeight, BI, 8)
+	NumPut("Short", 1, BI, 12)
+	NumPut("Short", biBitCount, BI, 14)
+
+	hBM := DllCall("CreateDIBSection"
+									, Ptr, MDC
+									, Ptr, BI.Ptr
+									, "Int", 0
+									, PtrP, &ppvBits
+									, Ptr, 0
+									, "Int", 0
+									, Ptr)
+
+	if (hBM) {
+
+		OBM := DllCall("SelectObject", Ptr, MDC, Ptr, hBM, Ptr)
+
+		DllCall( "BitBlt"
+			   , Ptr	, MDC
+			   , "Int"  , 0
+			   , "Int"  , 0
+			   , "Int"  , captureWidth
+			   , "Int"  , captureHeight
+			   , Ptr	, HDC
+			   , "Int"  , captureX
+			   , "Int"  , captureY
+			   , "UInt" , 0x00CC0020 | 0x40000000)
+
+		DllCall("RtlMoveMemory", Ptr, Scan.Ptr, Ptr, ppvBits, Ptr, Stride * captureHeight)
+
+		DllCall("SelectObject", Ptr, MDC, Ptr, OBM)
+
+		DllCall("DeleteObject", Ptr, hBM)
+	}
+	DllCall("DeleteDC", Ptr, MDC)
+	DllCall("ReleaseDC", Ptr, Win, Ptr, HDC)
+}
+
+GetStride( biWidth ) {
+    global biBitCount
+    global Stride
+    ( !IsSet( Stride ) &&  Stride := ( ( biWidth * biBitCount + 31 ) & ~31 ) >> 3 )
+    return
+}
+
+GetbiBitCount( Bits := 32 ) {
+
+    static BitCount := Map(
+        "1", 1,     ;
+        "2", 3,     ;
+        "4", 4,     ;
+        "8", 8,     ;
+        "16", 16,   ;
+        "24", 24,   ;
+        "32", 32,   ;
+    )
+
+    if ( !IsSet( biBitCount ) ) {
+
+        global biBitCount := BitCount[ String( Bits ) ]
+    }
+    else {
+        global biBitCount := BitCount[ String( Bits ) ]
+    }
+}
+
+Viso( x, sh, sw ) {
+
+    Text := ""
+    text1 := ""
+    loop sh {
+
+        loop sw {
+
+            c := NumGet( x, 4 * ( A_Index - 1 ), "UInt" )
+            text1 .= NumGet( x, 4 * ( A_Index - 1 ), "UInt" ) ","
+            Text .= ( c >> 16 ) & 0xFF ","
+            Text .= ( c >> 8 ) & 0xFF ","
+            Text .= c & 0xFF ","
+
+            x := A_Index
+        }
+        c := NumGet( x, 4 * x, "UInt" )
+        text1 .= NumGet( ss, 4 * x, "UInt" )
+        Text .= ( c >> 16 ) & 0xFF ","
+        Text .= ( c >> 8 ) & 0xFF ","
+        Text .= c & 0xFF "`n"
+    }
+    FileAppend( Text "`n`n`n" text1, "C:\Users\morim\OneDrive\DynamicRegionScren\PicFind\NewTest 29.08.2024\VisoTest.txt")
+    ;MsgBox( Text "`n`n`n" text1 )
+}

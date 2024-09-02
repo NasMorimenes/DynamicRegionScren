@@ -1,0 +1,7 @@
+#Include Call_ColorDifferenceFind.ahk
+#Include MCode_ColorDifferenceFind.ahk
+#Include Viso_ColorDifferenceFind.ahk
+#Include Hex_ColorDifferenceFind.ahk
+#Include GetBiBitCount_ColorDifferenceFind.ahk
+#Include GetBitsFromScreen_ColorDifferenceFind.ahk
+#Include GetStride_ColorDifferenceFind.ahk
