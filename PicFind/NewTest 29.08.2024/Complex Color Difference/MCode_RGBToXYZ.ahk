@@ -11,11 +11,14 @@
 		"Ptr", 0,
 		"Ptr", 0
 	)
-		DllCall(
+
+	DllCall(
 		"VirtualProtect",
 		"Ptr", code,
 		"Ptr", len,
-		"uint", 0x40,"Ptr*", 0
+		"uint", 0x40,
+		"Ptr*", 0
 	)
+	
 	return code
 }

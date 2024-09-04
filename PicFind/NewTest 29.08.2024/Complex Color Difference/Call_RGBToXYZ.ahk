@@ -1,5 +1,5 @@
 ﻿Call( R, G, B, &X ) {
-
+    ;global
     Hex := Hex_RGBToXYZ()
     code := MCode( Hex )
 
@@ -9,7 +9,7 @@
         "uint", R,
         "uint", G,
         "uint", B,
-        "UPtr", X.Ptr
+        "Ptr", X.Ptr
     )
     return result
 }

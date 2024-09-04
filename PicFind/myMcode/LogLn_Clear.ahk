@@ -1,7 +1,7 @@
-﻿LogLn_Clear(){
+﻿LogLn_Clear() {
 	global
 	CompilerLogData := ""
-	GuiControl,,CompilerLog, % CompilerLogData
+	;GuiControl,,CompilerLog, % CompilerLogData
 	CompilerLog_LogLn:=0
-	ControlSend,,{PGDN}{Down}{End},ahk_id %hCompilerLog%
+	;ControlSend,,{PGDN}{Down}{End},ahk_id %hCompilerLog%
 }

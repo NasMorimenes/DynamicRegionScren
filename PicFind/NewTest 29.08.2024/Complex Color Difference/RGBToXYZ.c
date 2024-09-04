@@ -1,7 +1,7 @@
 #include <math.h>
 
 // Função para converter RGB para XYZ
-void rgb_to_xyz(unsigned r, unsigned g, unsigned b, float *fout ) {
+void rgb_to_xyz(unsigned int r, unsigned int g, unsigned int b, float *fout ) {
     // Normaliza os valores RGB
     float out[ 3 ];
     float y, x = 2.4;

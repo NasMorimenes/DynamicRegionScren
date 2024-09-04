@@ -1,24 +1,40 @@
-﻿#Include Includes.ahk
-color := 0xFF0000
+﻿;#Include Includes.ahk
+R := 255
+G := 25
+B := 100
 
+X := Buffer(12, 0)
 
-dn := Buffer( 12, 0 )
-NumPut( "float", 250.0, dn, 0 )
-NumPut( "float", 0.0, dn, 4 )
-NumPut( "float", 0.0, dn, 8 )
-R := 255 ;NumGet( dn, 0, "float")
-G := 25 ;NumGet( dn, 4, "float")
-B := 100 ;NumGet( dn, 8, "float")
+Hex := "660FEFC0660FEFD2660FEFDBF20F100D00000000F20F102D10000000660FEFE489D24589C089C9F2480F2AC2F2490F2AD0F2480F2AD9F20F59C1F20F59D1F20F59D9F20F100D08000000F20F5AC0F30F5AC0F20F59C8F20F5AD2F30F5AD2F20F59EAF20F5ADBF30F5AE3F20F58CDF20F102D18000000F20F59ECF20F58CDF20F102D28000000F20F59EAF20F5AC9F3410F1109F20F100D20000000F20F591540000000F20F59C8F20F590538000000F20F58CDF20F102D30000000F20F58C2F20F59ECF20F592548000000F20F58CDF20F58C4F20F5AC9F3410F114904F20F5AC0F3410F1141080F28C3C39090909090101010101010703FA52C431CEBE2D63FB4C876BE9F1AC73FA2B437F8C264DA3FA52C431CEBE2E63F5D6DC5FEB27BB23FBC96900F7A36CB3F32E6AE25E483BE3FD122DBF97E6AEE3FA54E401361C3933F"
+len := StrLen(hex) // 2
+code := Buffer(len, 0)
 
-MsgBox Type( B )
+DllCall(
+    "crypt32\CryptStringToBinary",
+    "Str", hex,
+    "uint", 0,
+    "uint", 4,
+    "Ptr", code,
+    "uint*", &len,
+    "Ptr", 0,
+    "Ptr", 0
+)
 
-X := Buffer( 24, 0 )
+DllCall(
+    "VirtualProtect",
+    "Ptr", code,
+    "Ptr", len,
+    "uint", 0x40,
+    "Ptr*", 0
+)
 
-;MsgBox( 255 // 255)
+result :=
+    DllCall(
+        code,
+        "uint", R,
+        "uint", G,
+        "uint", B,
+        "float",
+    )
 
-
-MsgBox( Call( R, G, B, &X ) ) ;, 0, 0, &X
-
-;MsgBox( Y )
-
-;MsgBox( NumGet( Y, 0, "double") )
+    MsgBox result ;"X: " NumGet(x, 0, "float") ", Y: " NumGet(x, 4, "float") ", Z: " NumGet(x, 8, "float")

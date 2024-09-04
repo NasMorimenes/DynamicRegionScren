@@ -1,15 +1,22 @@
-﻿MCode_Generate(file,cp,flags:="") {
+﻿MCode_Generate( file, cp, flags := "" ) {
+
 	global @PATH_VAR
-	tmpf_a:=get_TempFile()
-	tmpf_b:=tmpf_a "_b"
-	tmpf_c:=tmpf_a "_c"
-	SplitPath, cp,, cpDir
-	if !FileExist(cp) {
-		cpPath:=get_where_Path(cp)
-		SplitPath, cpPath,, cpDir
+	
+	tmpf_a := get_TempFile()
+	tmpf_b := tmpf_a "_b"
+	tmpf_c := tmpf_a "_c"
+
+	SplitPath( cp, , &cpDir )
+
+	if ( !FileExist(cp) ) {
+
+		cpPath := get_where_Path( cp )
+		SplitPath( cpPath, , &cpDir )
 	}
-	EnvSet, Path, %cpDir% ;Update path environment var
+	EnvSet( "Path", cpDir ) ;Update path environment var
+
 	RunWait, %comspec% /c %cp% %flags% -Wa`,-aln="%tmpf_a%" "%file%" -o "%tmpf_b%" 2> "%tmpf_c%",, UseErrorLevel Hide
+	RunWait( A_ComSpec "/c " cp " " flags " -Wa" )
 	cpRunEL:=ErrorLevel, ReturnVar:=""
 	EnvSet, Path, %@PATH_VAR% ;Restore env var
 	if cpRunEL = ERROR
